@@ -50,10 +50,20 @@ export const createBooking = (req, res) => {
 // Get all bookings for a customer by CID
 export const getBookingsByCID = (req, res) => {
   const query = `
-    SELECT * 
-    FROM bookings WHERE CID = ? ORDER BY date DESC`;
+    SELECT b.*,t.turfName 
+    FROM bookings b JOIN turfs t ON t.TID=b.TID WHERE CID = ? ORDER BY date DESC`;
 
   db.query(query, [req.params.CID], (err, data) => {
+    if (err) return res.status(500).json(err);
+    return res.status(200).json(data);
+  });
+};
+export const getBookings = (req, res) => {
+  const query = `
+    SELECT * 
+    FROM bookings ORDER BY date DESC`;
+
+  db.query(query, (err, data) => {
     if (err) return res.status(500).json(err);
     return res.status(200).json(data);
   });
@@ -75,6 +85,17 @@ export const getBookingByTID = (req, res) => {
   const query = `
     SELECT * 
     FROM bookings WHERE TID = ? ORDER BY date DESC`;
+
+  db.query(query, [req.params.TID], (err, data) => {
+    if (err) return res.status(500).json(err);
+    if (!data.length) return res.status(404).json("Booking not found");
+    return res.status(200).json(data);
+  });
+};
+export const getBookingAll = (req, res) => {
+  const query = `
+    SELECT b.*,c.*
+    FROM bookings b JOIN customers c ON c.CID=b.CID WHERE TID = ? ORDER BY date DESC`;
 
   db.query(query, [req.params.TID], (err, data) => {
     if (err) return res.status(500).json(err);
@@ -156,6 +177,21 @@ export const getBookingsByDate = (req, res) => {
     FROM bookings b JOIN customers c ON b.CID=c.CID WHERE date = ? ORDER BY date DESC`;
 
   db.query(query, [date], (err, data) => {
+    if (err) return res.status(500).json(err);
+    if (!data.length)
+      return res.status(404).json("No bookings found for this date");
+    return res.status(200).json(data);
+  });
+};
+
+export const getBookingsByDateAndTID = (req, res) => {
+  const { date, TID } = req.params;
+
+  const query = `
+    SELECT b.*,c.*
+    FROM bookings b JOIN customers c ON b.CID=c.CID WHERE b.date = ? AND b.TID=? ORDER BY date DESC`;
+
+  db.query(query, [date, TID], (err, data) => {
     if (err) return res.status(500).json(err);
     if (!data.length)
       return res.status(404).json("No bookings found for this date");

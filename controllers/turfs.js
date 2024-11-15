@@ -21,7 +21,7 @@ export const createTurf = (req, res) => {
   } = req.body;
 
   const q =
-    "INSERT INTO turfs (turfName, area, address, price, maps, startTime, endTime, gamesAvailable, amenities, images, username, password, ownerName, mobileNo, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+    "INSERT INTO turfs (turfName, area, address, price, maps, startTime, endTime, gamesAvailable, amenities, images, username, password, ownerName, mobileNo, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, NOW(), NOW())";
 
   const values = [
     turfName,
